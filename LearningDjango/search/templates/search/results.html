@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Results</title>
+</head>
+<body>
+  <h3>Search results</h3>
+  <p>You searched {{ search_term }} by {{ search_by }}</p>
+  <p>Results:</p>
+  {% for item in results %}
+    <ul>
+      <li>{{ item.name }} | {{ item.color }}</li>
+    </ul>
+  {% endfor %}
+
+  <a href="{% url 'search:index' %}">Search again?</a>
+</body>
+</html>

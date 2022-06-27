@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'search/style.css' %}">
+</head>
+<body>
+<div class="container">
+    <h3>Welcome to the Library Catalog!</h3>
+    <form action="{% url 'search:search_results' %}" method="POST" id="search-bar">
+        {% csrf_token %}
+        <select name="search_by">
+            <option value="all" selected hidden>Search by...</option>
+            <option value="all">All</option>
+            <option value="name">Name</option>
+            <option value="color">Color</option>
+        </select>
+        <input type="text" placeholder="Search..." name="search_term" aria-label="search bar">
+        <button>Yeet!</button>
+    </form>
+</div>
+</body>
+</html>
+
+
+
+
+
