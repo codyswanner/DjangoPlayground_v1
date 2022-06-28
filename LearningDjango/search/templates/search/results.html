@@ -10,7 +10,7 @@
   <p>Results:</p>
   {% for item in results %}
     <ul>
-      <li>{{ item.name }} | {{ item.color }}</li>
+      <li>{{ item.title }} | {{ item.author_last }}, {{ item.author_first }} | Shelf {{ item.shelf }}</li>
     </ul>
   {% endfor %}
 
