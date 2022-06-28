@@ -5,6 +5,6 @@ To my knowledge so far, I should be the only one working on this project right n
 I'm using GitHub to be able to work on the project both from work and at home (it benefits my workplace so I feel I can work on it there, but also it's fun and I want to work on it at home.  And nobody asked me to do this so maybe I shouldn't be paid for it, idk).
 
 This project uses the Django Python framework to create a website that will (eventually) allow users to search the library by title, author, genre, and any other search categories I come up with before pushing this out to a real server.
-Currently, the project searches a test database (database name = "DjangoPlayground_v1", table name = "Stuff") to check that the search function is working correctly before inputting real books (I am almost ready for real books though!).
+Currently, the project searches a test database (database name = "DjangoPlayground_v1", table name = "search_books" populated with a few of my favorites) to check that the search function is working correctly before inputting data on the scale of the real library.
 
 It may also be worth noting that I am an amatuer programmer and at any point may not know what the heck I'm doing, and I'm guessing that if you're reading this for some reason then you're more experienced than me (hard not to be) so tips are welcome (whether I use them is up to my sole discretion which is impacted by understanding of given information, and laziness).
