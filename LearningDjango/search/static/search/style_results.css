@@ -1,0 +1,56 @@
+body {
+        background-image: linear-gradient(rgba(116, 157, 227, 0.8),rgba(116, 157, 227, 0.8)), url("/static/search/library_shelf.jpg");
+}
+
+
+.container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10%;
+        margin-left: 10%;
+        margin-right: 10%;
+
+}
+
+h3 {
+        font-size: 40px;
+        padding:  5px;
+        margin: 5px;
+        flex: 0;
+        color: rgba(225, 240, 255, 1);
+        justify-content: center;
+
+}
+
+
+#you-searched {
+        font-size: 18px;
+        color: rgba(255, 240, 255, 1);
+        justify-content: center;
+        margin-top: 0;
+
+}
+
+
+#results-label {
+        font-size: 25px;
+        color: rgba(255, 240, 255, 1);
+        margin-top: 10px;
+        margin-bottom: 0;
+}
+
+
+p {
+        font-size: 20px;
+        color: rgba(255, 240, 255, 1);
+        justify-content: center;
+
+}
+
+ul {
+        font-size: 18px;
+        color: rgba(255, 240, 255, 1);
+        justify-content: center;
+}

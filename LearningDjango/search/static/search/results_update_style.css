@@ -1,0 +1,90 @@
+body {
+    background-image: linear-gradient(rgba(116, 157, 227, 0.8),rgba(116, 157, 227, 0.8)), url("/static/search/library_shelf.jpg");
+}
+
+
+.side-bar {
+    width: 20%;
+    height: 700px;
+    background-color: rgba(255, 255, 255, 0.5);
+    display: inline-block;
+    margin-left: 2%;
+    vertical-align: top;
+}
+
+
+.results-container {
+    width: 60%;
+    display: inline-block;
+    vertical-align: top;
+    display: inline-block;
+}
+
+.search-results-header {
+    font-size: 50px;
+    color: white;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    font-family: Georgia;
+
+}
+
+.search-result {
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    margin-bottom: 10px;
+    margin-left: 5px;
+    padding-top: 5px;
+    padding-right: 1.2%;
+    padding-bottom: 5px;
+    padding-left: 15px;
+    line-height: 30px;
+    font-size: 20px;
+    font-family: Georgia;
+
+
+}
+
+.first-column {
+    display: inline-block;
+    padding-right: 2.5%;
+    margin-left: 10px;
+    width: 36%;
+
+}
+
+#title {
+    text-decoration: underline;
+}
+
+.second-column {
+    display: inline-block;
+    padding-right: 2.5%;
+    width: 30%;
+}
+
+#genre-1 {
+    vertical-align: top;
+
+}
+
+.third-column {
+    display: inline-block;
+    width: 21%;
+    vertical-align: top;
+}
+
+#shelf-number {
+    padding-bottom: 30px;
+}
+
+.search-again {
+    text-align: center;
+    font-size: 25px;
+    font-family: Georgia;
+}
+
+a {
+    color: white;
+}
