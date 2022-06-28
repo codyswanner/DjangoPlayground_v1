@@ -13,10 +13,13 @@ def __str__(self):
 
 
 class Books(models.Model):
-    title = models.CharField(max_length=50)
-    author = models.CharField(max_length=50)
-    genre_1 = models.CharField(max_length=30)
-    genre_2 = models.CharField(max_length=30)
-    genre_3 = models.CharField(max_length=30)
-    shelf = models.CharField(max_length=10)
+    title = models.CharField(max_length=50, null=False)
+    author_first = models.CharField(max_length=30, null=False)
+    author_middle = models.CharField(max_length=30, null=True)
+    author_last = models.CharField(max_length=30, null=False)
+    genre_1 = models.CharField(max_length=30, null=False)
+    genre_2 = models.CharField(max_length=30, null=True)
+    genre_3 = models.CharField(max_length=30, null=True)
+    language = models.CharField(max_length=20)
+    shelf = models.CharField(max_length=10, null=False)
 
