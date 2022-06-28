@@ -49,4 +49,4 @@ def search_results(request):
                'results': results,
                'search_by': search_by,
                }
-    return render(request, 'search/results.html', context)
+    return render(request, 'search/results_update.html', context)

@@ -2,14 +2,14 @@ from django.db import models
 
 # Create your models here.
 
-
-class Stuff(models.Model):
-    name = models.CharField(max_length=20)
-    color = models.CharField(max_length=20)
-
-
-def __str__(self):
-    return self.name
+#
+# class Stuff(models.Model):
+#     name = models.CharField(max_length=20)
+#     color = models.CharField(max_length=20)
+#
+#
+# def __str__(self):
+#     return self.name
 
 
 class Books(models.Model):
@@ -23,3 +23,5 @@ class Books(models.Model):
     language = models.CharField(max_length=20)
     shelf = models.CharField(max_length=10, null=False)
 
+    def __str__(self):
+        return self.title
