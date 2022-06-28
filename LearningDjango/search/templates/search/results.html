@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
   <meta charset="UTF-8">
   <title>Results</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'search/style_results.css' %}">
 </head>
 <body>
-  <h3>Search results</h3>
-  <p>You searched {{ search_term }} by {{ search_by }}</p>
-  <p>Results:</p>
-  {% for item in results %}
-    <ul>
-      <li>{{ item.title }} | {{ item.author_last }}, {{ item.author_first }} | Shelf {{ item.shelf }}</li>
-    </ul>
-  {% endfor %}
+  <div class="container">
+    <h3>Search results</h3>
+    <p id="you-searched">You searched {{ search_term }} by {{ search_by }}</p>
+    <p id="results-label">Results:</p>
+    {% for item in results %}
+      <ul>
+        <li>{{ item.title }} | {{ item.author_last }}, {{ item.author_first }} | Shelf {{ item.shelf }}</li>
+      </ul>
+    {% endfor %}
 
-  <a href="{% url 'search:index' %}">Search again?</a>
+    <a href="{% url 'search:index' %}">Search again?</a>
+  </div>
 </body>
 </html>
