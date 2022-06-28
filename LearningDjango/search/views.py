@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Q
-from search.models import Stuff
+from search.models import Books
 
 # Create your views here.
 
@@ -20,13 +20,33 @@ def search_results(request):
     results = []
     # Using * overrides search_by and shows all data (also displays "searched * by *")
     if search_term == "*":
-        results = Stuff.objects.all()
+        results = Books.objects.all()
         search_by = "*"
     else:
         if search_by == "all":
-            results = Stuff.objects.filter(Q(color__contains=search_term) | Q(name__contains=search_term))
-        elif search_by == "name":
-            results = Stuff.objects.filter(name__contains=search_term)
-        elif search_by == "color":
-            results = Stuff.objects.filter(color__contains=search_term)
-    return render(request, 'search/results.html', {'search_term': search_term, 'results': results, 'search_by': search_by})
+            results = Books.objects.filter(
+                Q(author_first__icontains=search_term) |
+                Q(author_last__icontains=search_term) |
+                Q(author_middle__icontains=search_term) |
+                Q(title__icontains=search_term) |
+                Q(genre_1__icontains=search_term) |
+                Q(genre_2__icontains=search_term) |
+                Q(genre_3__icontains=search_term) |
+                Q(shelf__icontains=search_term) |
+                Q(language__icontains=search_term))
+        elif search_by == "title":
+            results = Books.objects.filter(title__icontains=search_term)
+        elif search_by == "author":
+            results = Books.objects.filter(Q(author_first__icontains=search_term) | Q(author_last__icontains=search_term))
+        elif search_by == "genre":
+            results = Books.objects.filter(Q(genre_1__icontains=search_term) | Q(genre_2__icontains=search_term) | Q(genre_3__icontains=search_term))
+        elif search_by == "shelf":
+            results = Books.objects.filter(shelf__icontains=search_term)
+        elif search_by == "language":
+            results = Books.objects.filter(language__contains=search_term)
+        # Add else statement that brings up error page
+    context = {'search_term': search_term,
+               'results': results,
+               'search_by': search_by,
+               }
+    return render(request, 'search/results.html', context)
