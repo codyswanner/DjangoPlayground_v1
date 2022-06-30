@@ -1,5 +1,8 @@
 body {
     background-image: linear-gradient(rgba(116, 157, 227, 0.8),rgba(116, 157, 227, 0.8)), url("/static/search/library_shelf.jpg");
+    font-family: Georgia;
+
+
 }
 
 
@@ -26,7 +29,7 @@ body {
     text-align: center;
     margin-top: 50px;
     margin-bottom: 30px;
-    font-family: Georgia;
+
 
 }
 
@@ -41,7 +44,7 @@ body {
     padding-left: 15px;
     line-height: 30px;
     font-size: 20px;
-    font-family: Georgia;
+
 
 
 }
@@ -82,7 +85,6 @@ body {
 .search-again {
     text-align: center;
     font-size: 25px;
-    font-family: Georgia;
 }
 
 a {
