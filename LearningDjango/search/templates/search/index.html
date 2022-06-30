@@ -11,6 +11,7 @@
     <h3>Welcome to the Library Catalog!</h3>
     <form action="{% url 'search:search_results' %}" method="POST" id="search-bar">
         {% csrf_token %}
+        <input type="hidden" name="search_type" value="default_search">
         <select name="search_by">
             <option value="all" selected hidden>Search by...</option>
             <option value="all">All</option>
@@ -24,6 +25,7 @@
         <input type="text" placeholder="Search..." name="search_term" aria-label="search bar">
         <button>Go!</button>
     </form>
+    <a class="advanced-search-button" href="{% url 'search:advanced_search' %}">Advanced Search</a>
 </div>
 </body>
 </html>

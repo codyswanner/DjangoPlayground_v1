@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced Search</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'search/advanced_search_style.css' %}">
+</head>
+<body>
+    <div class="advanced-container">
+        <div class="advanced-body">
+            <div class="advanced-header">
+                <h2 class="advanced-search-text">Advanced Search</h2>
+            </div>
+            <div class="form-container">
+                <form class="advanced-form" action="{% url 'search:search_results' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="search_type" value="advanced_search">
+                    <div class="any-all-selector">
+                        <h3>
+                            Match <select name="any_all">
+                            <option value="all">all</option>
+                            <option value="any">any</option>
+                            </select>
+                            of:
+                        </h3>
+                    </div>
+                    <div class="search-criteria">
+                        <div class="search-field">
+                            <label for="search-title">Title: </label>
+                            <input type="text" class="input-field" id="search-title" name="search_title">
+                        </div>
+                        <div class="search-field">
+                            <label for="search-author">Author: </label>
+                            <input type="text" class="input-field" id="search-author" name="search_author">
+                        </div>
+                        <div class="search-field">
+                            <label for="search-genre">Genre/Subject: </label>
+                            <input type="text" class="input-field" id="search-genre" name="search_genre">
+                        </div>
+                        <div class="search-field">
+                            <label for="search-language">Language: </label>
+                            <input type="text" class="input-field" id="search-language" name="search_language">
+                        </div>
+                        <div class="search-field">
+                            <label for="search-shelf">Shelf: </label>
+                            <input type="text" class="input-field" id="search-shelf" name="search_shelf">
+                        </div>
+                    </div>
+                    <div class="search-exclude">
+                        <h3 id="exclude-text">
+                            Exclude:
+                        </h3>
+                        <div class="search-field">
+                            <label for="search-title-exclude">Title: </label>
+                            <input type="text" class="input-field" id="search-title-exclude" name="search_title_exclude">
+                        </div>
+                        <div class="search-field">
+                            <label for="search-author-exclude">Author: </label>
+                            <input type="text" class="input-field" id="search-author-exclude" name="search_author_exclude">
+                        </div>
+                        <div class="search-field">
+                            <label for="search-genre-exclude">Genre/Subject: </label>
+                            <input type="text" class="input-field" id="search-genre-exclude" name="search_genre_exclude">
+                        </div>
+                        <div class="search-field">
+                            <label for="search-language-exclude">Language: </label>
+                            <input type="text" class="input-field" id="search-language-exclude" name="search_language_exclude">
+                        </div>
+                        <div class="search-field">
+                            <label for="search-shelf-exclude">Shelf: </label>
+                            <input type="text" class="input-field" id="search-shelf-exclude" name="search_shelf_exclude">
+                        </div>
+                    </div>
+                    <button id="search-button">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="side-bar">
+        <h3>Search Tips</h3>
+        <p>{% lorem 2 p %}</p>
+    </div>
+</body>
+</html>
