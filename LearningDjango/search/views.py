@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.db.models import Q
 from search.models import Books
 
+
 # Create your views here.
 
 #
@@ -42,9 +43,12 @@ def search_results(request):
             elif search_by == "title":
                 results = Books.objects.filter(title__icontains=search_term)
             elif search_by == "author":
-                results = Books.objects.filter(Q(author_first__icontains=search_term) | Q(author_last__icontains=search_term))
+                results = Books.objects.filter(
+                    Q(author_first__icontains=search_term) | Q(author_last__icontains=search_term))
             elif search_by == "genre":
-                results = Books.objects.filter(Q(genre_1__icontains=search_term) | Q(genre_2__icontains=search_term) | Q(genre_3__icontains=search_term))
+                results = Books.objects.filter(
+                    Q(genre_1__icontains=search_term) | Q(genre_2__icontains=search_term) | Q(
+                        genre_3__icontains=search_term))
             elif search_by == "shelf":
                 results = Books.objects.filter(shelf__icontains=search_term)
             elif search_by == "language":
@@ -101,13 +105,15 @@ def search_results(request):
 
         results = []
         if any_all == "all":
+            # define variables from POST request from advanced search
             search_title = request.POST['search_title']
             search_author = request.POST['search_author']
             search_genre = request.POST['search_genre']
             search_language = request.POST['search_language']
             search_shelf = request.POST['search_shelf']
-            
-            results = Books.objects.filter(
+
+            # create results list based on include filters (before exclude filters)
+            query = Books.objects.filter(
 
                 Q(title__icontains=search_title) &
 
@@ -123,6 +129,42 @@ def search_results(request):
 
                 Q(language__icontains=search_language)
             )
+
+            for i in query:
+                if i not in results:
+                    results.append(i)
+
+            # collect matching exclusions by given fields
+            title_results_exclude = Books.objects.filter(title__icontains=search_title_exclude)
+            author_results_exclude = Books.objects.filter(
+                Q(author_first__icontains=search_author_exclude) | Q(
+                    author_last__icontains=search_author_exclude) | Q(
+                    author_middle__icontains=search_author_exclude))
+            genre_results_exclude = Books.objects.filter(
+                Q(genre_1__icontains=search_genre_exclude) | Q(genre_2__icontains=search_genre_exclude) | Q(
+                    genre_3__icontains=search_genre_exclude))
+            language_results_exclude = Books.objects.filter(language__icontains=search_language_exclude)
+            shelf_results_exclude = Books.objects.filter(shelf__icontains=search_shelf_exclude)
+
+            # remove matching exclusions from results list
+            for i in title_results_exclude:
+                if i in results:
+                    results.remove(i)
+            for i in author_results_exclude:
+                if i in results:
+                    results.remove(i)
+            for i in genre_results_exclude:
+                if i in results:
+                    results.remove(i)
+            for i in language_results_exclude:
+                if i in results:
+                    results.remove(i)
+            for i in shelf_results_exclude:
+                if i in results:
+                    results.remove(i)
+
+            # apply exception filters
+
 
             # # collect matching exclusions by given fields
             # title_results_exclude = Books.objects.filter(title__icontains=search_title_exclude)
@@ -155,21 +197,14 @@ def search_results(request):
         elif any_all == "any":
             # collect matching results by title, author, genre, langauge and shelf
             title_results = Books.objects.filter(title__icontains=search_title)
-            author_results = Books.objects.filter(Q(author_first__icontains=search_author) | Q(author_last__icontains=search_author) | Q(author_middle__icontains=search_author))
-            genre_results = Books.objects.filter(Q(genre_1__icontains=search_genre) | Q(genre_2__icontains=search_genre) | Q(genre_3__icontains=search_genre))
+            author_results = Books.objects.filter(
+                Q(author_first__icontains=search_author) | Q(author_last__icontains=search_author) | Q(
+                    author_middle__icontains=search_author))
+            genre_results = Books.objects.filter(
+                Q(genre_1__icontains=search_genre) | Q(genre_2__icontains=search_genre) | Q(
+                    genre_3__icontains=search_genre))
             language_results = Books.objects.filter(language__icontains=search_language)
             shelf_results = Books.objects.filter(shelf__icontains=search_shelf)
-
-            # collect matching exclusions by given fields
-            title_results_exclude = Books.objects.filter(title__icontains=search_title_exclude)
-            author_results_exclude = Books.objects.filter(
-                Q(author_first__icontains=search_author_exclude) | Q(author_last__icontains=search_author_exclude) | Q(
-                    author_middle__icontains=search_author_exclude))
-            genre_results_exclude = Books.objects.filter(
-                Q(genre_1__icontains=search_genre_exclude) | Q(genre_2__icontains=search_genre_exclude) | Q(
-                    genre_3__icontains=search_genre_exclude))
-            language_results_exclude = Books.objects.filter(language__icontains=search_language_exclude)
-            shelf_results_exclude = Books.objects.filter(shelf__icontains=search_shelf_exclude)
 
             # put matching results into results list
             for i in title_results:
@@ -187,6 +222,18 @@ def search_results(request):
                 if i not in results:
                     results.append(i)
 
+            # collect matching exclusions by given fields
+            title_results_exclude = Books.objects.filter(title__icontains=search_title_exclude)
+            author_results_exclude = Books.objects.filter(
+                Q(author_first__icontains=search_author_exclude) | Q(
+                    author_last__icontains=search_author_exclude) | Q(
+                    author_middle__icontains=search_author_exclude))
+            genre_results_exclude = Books.objects.filter(
+                Q(genre_1__icontains=search_genre_exclude) | Q(genre_2__icontains=search_genre_exclude) | Q(
+                    genre_3__icontains=search_genre_exclude))
+            language_results_exclude = Books.objects.filter(language__icontains=search_language_exclude)
+            shelf_results_exclude = Books.objects.filter(shelf__icontains=search_shelf_exclude)
+
             # remove matching exclusions from results list
             for i in title_results_exclude:
                 if i in results:
@@ -203,6 +250,5 @@ def search_results(request):
             for i in shelf_results_exclude:
                 if i in results:
                     results.remove(i)
-
         context = {'results': results}
         return render(request, 'search/results_update.html', context)
