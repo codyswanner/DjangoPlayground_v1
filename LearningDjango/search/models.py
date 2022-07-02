@@ -12,15 +12,15 @@ from django.db import models
 #     return self.name
 
 
-class Books(models.Model):
+class Book(models.Model):
     title = models.CharField(max_length=50, null=False)
     author_first = models.CharField(max_length=30, null=False)
-    author_middle = models.CharField(max_length=30, null=True)
+    author_middle = models.CharField(max_length=30, null=True, blank=True)
     author_last = models.CharField(max_length=30, null=False)
     genre_1 = models.CharField(max_length=30, null=False)
-    genre_2 = models.CharField(max_length=30, null=True)
-    genre_3 = models.CharField(max_length=30, null=True)
-    language = models.CharField(max_length=20)
+    genre_2 = models.CharField(max_length=30, null=True, blank=True)
+    genre_3 = models.CharField(max_length=30, null=True, blank=True)
+    language = models.CharField(max_length=20, choices=[("English", "English"), ("Spanish / Español", "Spanish / Español")])
     shelf = models.CharField(max_length=10, null=False)
 
     def __str__(self):
