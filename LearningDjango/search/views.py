@@ -6,10 +6,6 @@ from .forms import NewBookForm
 
 # Create your views here.
 
-#
-# def index(request):
-#     return HttpResponse("Here's the search page! (Search bar forthcoming)")
-
 
 def index(request):
     return render(request, 'search/index.html')
@@ -60,8 +56,20 @@ def search_results(request):
                    'search_by': search_by,
                    }
         return render(request, 'search/results_update.html', context)
+
+    # If POST request comes from advanced search, use the following to filter results
     elif request.POST['search_type'] == "advanced_search":
+        # Determine if "match all" or "match any" should be used
         any_all = request.POST['any_all']
+
+        #######
+        # Blank strings cause issues for most search areas.
+        # An arbitrary string that will return zero matches
+        # is needed to allow the search engine to function
+        # properly.  As such... YEET
+        #######
+
+        # Assign placeholder string for blank fields; otherwise, assign user inputs to variables
         if request.POST['search_title'] != "":
             search_title = request.POST['search_title']
         else:
@@ -83,6 +91,7 @@ def search_results(request):
         else:
             search_shelf = "YEET"
 
+        # Exclusion variables
         if request.POST['search_title_exclude'] != "":
             search_title_exclude = request.POST['search_title_exclude']
         else:
@@ -104,9 +113,12 @@ def search_results(request):
         else:
             search_shelf_exclude = "YEET"
 
+        # create results list (to be filled later)
         results = []
+
+        # code for "match all" selection -- stricter filtering process
         if any_all == "all":
-            # define variables from POST request from advanced search
+            # define variables from POST request from advanced search (no placeholder strings (that is, YOINK))
             search_title = request.POST['search_title']
             search_author = request.POST['search_author']
             search_genre = request.POST['search_genre']
@@ -131,9 +143,11 @@ def search_results(request):
                 Q(language__icontains=search_language)
             )
 
+            # add raw results to list "results"
             for i in query:
                 if i not in results:
                     results.append(i)
+
 
             # collect matching exclusions by given fields (OR operators make this work properly)
 
@@ -154,10 +168,13 @@ def search_results(request):
                 Q(language__icontains=search_language_exclude)
             )
 
+
             # remove matching exclusions from results list
             for i in query_exclude:
                 if i in results:
                     results.remove(i)
+
+
 
         elif any_all == "any":
             # collect matching results by title, author, genre, langauge and shelf
@@ -178,12 +195,15 @@ def search_results(request):
                 Q(language__icontains=search_language)
             )
 
+
             # put matching results into results list
             for i in query:
                 if i not in results:
                     results.append(i)
 
+
             # collect matching exclusions by given fields
+
             query_exclude = Book.objects.filter(
 
                 Q(title__icontains=search_title_exclude) |
@@ -201,11 +221,14 @@ def search_results(request):
                 Q(language__icontains=search_language_exclude)
             )
 
+
             # remove matching exclusions from results list
             for i in query_exclude:
                 if i in results:
                     results.remove(i)
 
+
+        # context variable as prescribed by Django
         context = {'results': results}
         return render(request, 'search/results_update.html', context)
 
@@ -218,4 +241,3 @@ def new_book_form(request):
 
     context = {'form': form}
     return render(request, 'search/new_book_form.html', context)
-
