@@ -1,15 +1,65 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>New Book Form</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'search/new_book_form_style.css' %}">
+    <link rel="icon" href="{% static 'search/favicon_blue.ico' %}">
 </head>
 <body>
     <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
-
-        <input type="submit" value="Save">
+        <div class="container">
+            <h3>Add Book to Catalog</h3>
+            <div class="form-container">
+                <div class="input-field" id="title-field-container">
+                    <div class="label-container">{{ form.title.label }}</div>
+                    {{ form.title }}
+                </div>
+                <div class="input-field" id="author-first-field-container">
+                    <div class="label-container">{{ form.author_first.label }}</div>
+                    {{ form.author_first }}
+                </div>
+                <div class="input-field" id="author-middle-field-container">
+                    <div class="label-container">{{ form.author_middle.label }}</div>
+                    {{ form.author_middle }}
+                </div>
+                <div class="input-field" id="author-last-field-container">
+                    <div class="label-container">{{ form.author_last.label }}</div>
+                    {{ form.author_last }}
+                </div>
+                <div class="input-field" id="genre-1-field-container">
+                    <div class="label-container">{{ form.genre_1.label }}</div>
+                    {{ form.genre_1 }}
+                </div>
+                <div class="input-field" id="genre-2-field-container">
+                    <div class="label-container">{{ form.genre_2.label }}</div>
+                    {{ form.genre_2 }}
+                </div>
+                <div class="input-field" id="genre-3-field-container">
+                    <div class="label-container">{{ form.genre_3.label }}</div>
+                    {{ form.genre_3 }}
+                </div>
+                <div class="input-field">
+                    <div class="label-container">{{ form.language.label }}</div>
+                    {{ form.language }}
+                </div>
+                <div class="input-field">
+                    <div class="label-container">{{ form.shelf.label }}</div>
+                    {{ form.shelf }}
+                </div>
+                <input type="submit" value="Save" id="submit-button">
+            </div>
+        </div>
+        <div class="side-bar">
+        <h3>Form Tips!</h3>
+        <ul>
+            <li>Use google! Search your book to find information and copy spelling, capitalization and punctuation from a reputable source like amazon.com, Google Books or a library.</li>
+            <li>Be sure titles and author names are capitalized appropriately.  Ask Cody if you have questions or need help.</li>
+            <li>Author middle name is optional, as well as Genre 2 and Genre 3.  All other fields are required.</li>
+        </ul>
+    </div>
     </form>
 
 </body>

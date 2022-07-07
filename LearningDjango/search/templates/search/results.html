@@ -13,7 +13,7 @@
     <p id="results-label">Results:</p>
     {% for item in results %}
       <ul>
-        <li>{{ item.title }} | {{ item.author_last }}, {{ item.author_first }} | Shelf {{ item.shelf }}</li>
+        <li>{{ item.title }} | {{ item.author_last }}, {{ item.author_first }} {{ item.author_middle }} | Shelf {{ item.shelf }}</li>
       </ul>
     {% endfor %}
 

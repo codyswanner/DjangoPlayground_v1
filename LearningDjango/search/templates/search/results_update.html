@@ -22,7 +22,11 @@
                     {{ item.title }}
                 </div>
                 <div class="result-info">
+                    {% if item.author_middle %}
+                    {{ item.author_last }}, {{ item.author_first }} {{ item.author_middle }}
+                    {% else %}
                     {{ item.author_last }}, {{ item.author_first }}
+                    {% endif %}
                 </div>
                 <div>
                     Index: {{ item.id }}
