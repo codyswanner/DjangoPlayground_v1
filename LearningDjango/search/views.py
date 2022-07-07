@@ -125,7 +125,7 @@ def search_results(request):
             search_language = request.POST['search_language']
             search_shelf = request.POST['search_shelf']
 
-            # create results list based on include filters (before exclude filters)
+            # create results list based on include filters (before applying exclude filters)
             query = Book.objects.filter(
 
                 Q(title__icontains=search_title) &
@@ -148,9 +148,7 @@ def search_results(request):
                 if i not in results:
                     results.append(i)
 
-
             # collect matching exclusions by given fields (OR operators make this work properly)
-
             query_exclude = Book.objects.filter(
 
                 Q(title__icontains=search_title_exclude) |
@@ -168,14 +166,12 @@ def search_results(request):
                 Q(language__icontains=search_language_exclude)
             )
 
-
             # remove matching exclusions from results list
             for i in query_exclude:
                 if i in results:
                     results.remove(i)
 
-
-
+        # code for "match any" selection, less strict filtering process
         elif any_all == "any":
             # collect matching results by title, author, genre, langauge and shelf
             query = Book.objects.filter(
@@ -195,15 +191,12 @@ def search_results(request):
                 Q(language__icontains=search_language)
             )
 
-
             # put matching results into results list
             for i in query:
                 if i not in results:
                     results.append(i)
 
-
             # collect matching exclusions by given fields
-
             query_exclude = Book.objects.filter(
 
                 Q(title__icontains=search_title_exclude) |
@@ -221,12 +214,10 @@ def search_results(request):
                 Q(language__icontains=search_language_exclude)
             )
 
-
             # remove matching exclusions from results list
             for i in query_exclude:
                 if i in results:
                     results.remove(i)
-
 
         # context variable as prescribed by Django
         context = {'results': results}
