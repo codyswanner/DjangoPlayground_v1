@@ -27,16 +27,26 @@ def search_results(request):
             search_by = "*"
         else:
             if search_by == "all":
-                results = Book.objects.filter(
-                    Q(author_first__icontains=search_term) |
-                    Q(author_last__icontains=search_term) |
-                    Q(author_middle__icontains=search_term) |
-                    Q(title__icontains=search_term) |
-                    Q(genre_1__icontains=search_term) |
-                    Q(genre_2__icontains=search_term) |
-                    Q(genre_3__icontains=search_term) |
-                    Q(shelf__icontains=search_term) |
-                    Q(language__icontains=search_term))
+                raw_input = request.POST['search_term']
+                search_terms = []
+                results = []
+                for x in raw_input.split():
+                    search_terms.append(x)
+
+                for search_term in search_terms:
+                    raw_results = Book.objects.filter(
+                        Q(author_first__icontains=search_term) |
+                        Q(author_last__icontains=search_term) |
+                        Q(author_middle__icontains=search_term) |
+                        Q(title__icontains=search_term) |
+                        Q(genre_1__icontains=search_term) |
+                        Q(genre_2__icontains=search_term) |
+                        Q(genre_3__icontains=search_term) |
+                        Q(shelf__icontains=search_term) |
+                        Q(language__icontains=search_term))
+                    for result in raw_results:
+                        if result not in results:
+                            results.append(result)
             elif search_by == "title":
                 results = Book.objects.filter(title__icontains=search_term)
             elif search_by == "author":
@@ -226,9 +236,55 @@ def search_results(request):
 
 def new_book_form(request):
     form = NewBookForm(request.POST or None)
+    form.fields['shelf'].initial = "1A"
     if form.is_valid():
+        if form.cleaned_data['genre_1'] == "Realistic Fiction":
+            form.cleaned_data['shelf'] = "1A"
+        elif form.cleaned_data['genre_1'] == "Literary Fiction":
+            form.cleaned_data['shelf'] = "2A"
+        elif form.cleaned_data['genre_1'] == "Mystery / Detective Fiction":
+            form.cleaned_data['shelf'] = "3A"
+        elif form.cleaned_data['genre_1'] == "Romance":
+            form.cleaned_data['shelf'] = "4A"
+        elif form.cleaned_data['genre_1'] == "Historical Fiction":
+            form.cleaned_data['shelf'] = "5A"
+        elif form.cleaned_data['genre_1'] == "Thriller / Horror":
+            form.cleaned_data['shelf'] = "6A"
+        elif form.cleaned_data['genre_1'] == "Science Fiction":
+            form.cleaned_data['shelf'] = "7A"
+        elif form.cleaned_data['genre_1'] == "Fantasy":
+            form.cleaned_data['shelf'] = "8A"
+        elif form.cleaned_data['genre_1'] == "Children's Books / Early Readers":
+            form.cleaned_data['shelf'] = "9A"
         form.save()
         form = NewBookForm()
 
     context = {'form': form}
     return render(request, 'search/new_book_form.html', context)
+
+
+def new_book_confirmation(request):
+    main_genre = request.POST['genre_1']
+    title = request.POST['title']
+    shelf = ""
+    if main_genre == "Realistic Fiction":
+        shelf = "1A"
+    elif main_genre == "Literary Fiction":
+        shelf = "2A"
+    elif main_genre == "Mystery / Detective Fiction":
+        shelf = "3A"
+    elif main_genre == "Romance":
+        shelf = "4A"
+    elif main_genre == "Historical Fiction":
+        shelf = "5A"
+    elif main_genre == "Thriller / Horror":
+        shelf = "6A"
+    elif main_genre == "Science Fiction":
+        shelf = "7A"
+    elif main_genre == "Fantasy":
+        shelf = "8A"
+    elif main_genre == "Children's Books / Early Readers":
+        shelf = "9A"
+
+    context = {'shelf': shelf, 'title': title}
+    return render(request, 'search/new_book_confirmation.html', context)
