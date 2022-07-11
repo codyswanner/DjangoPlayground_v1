@@ -1,15 +1,29 @@
 from django.db import models
+import re
+
 
 # Create your models here.
 
-#
-# class Stuff(models.Model):
-#     name = models.CharField(max_length=20)
-#     color = models.CharField(max_length=20)
-#
-#
-# def __str__(self):
-#     return self.name
+# The titlecase function *sort of* corrects capitalization mistakes by users.  See notes inside function.
+def titlecase(s):
+    # This step titlecases the first letter of all words, including trivial words like "and", "the", "of", etc.
+    all_titled = re.sub(
+        r"[A-Za-z]+('[A-Za-z]+)?",
+        lambda word: word.group(0).capitalize(),
+        s)
+
+    # This step *sort of* lowercases the trivial words.  However, in an effort to avoid inadvertent capturing,
+    # the regexp specifies a whitespace on each side of the word.  This causes issues with situations like " and the "
+    # because there is only one whitespace in the middle, and therefore only one match, so it will return " and The ",
+    # which is incorrect.  Also, worth noting that the all_titled string will have all capitalized words, hence the
+    # capitalized words in the capturing group.
+    # TODO: make a better regexp for this
+    trivials_lowered = re.sub(
+        r"\s(The|And|Of|For|In|A|To|An|By|On|That|But|Yet|So|Nor|Or|As|At)\s",
+        lambda word: word.group(0).lower(),
+        all_titled)
+
+    return trivials_lowered
 
 
 class Book(models.Model):
@@ -27,7 +41,7 @@ class Book(models.Model):
         ("Science Fiction", "Science Fiction"),
         ("Fantasy", "Fantasy"),
         ("Children's Books / Early Readers", "Children's Books / Early Readers"),
-        ])
+    ])
     genre_2 = models.CharField(max_length=35, null=True, blank=True, choices=[
         ("Realistic Fiction", "Realistic Fiction"),
         ("Literary Fiction", "Literary Fiction"),
@@ -39,7 +53,7 @@ class Book(models.Model):
         ("Fantasy", "Fantasy"),
         ("Children's Books / Early Readers", "Children's Books / Early Readers"),
         ("Young Adult Fiction", "Young Adult Fiction"),
-        ])
+    ])
     genre_3 = models.CharField(max_length=35, null=True, blank=True, choices=[
         ("Realistic Fiction", "Realistic Fiction"),
         ("Literary Fiction", "Literary Fiction"),
@@ -51,9 +65,10 @@ class Book(models.Model):
         ("Fantasy", "Fantasy"),
         ("Children's Books / Early Readers", "Children's Books / Early Readers"),
         ("Young Adult Fiction", "Young Adult Fiction"),
-        ])
-    language = models.CharField(max_length=20, choices=[("English", "English"), ("Spanish / Español", "Spanish / Español")])
-    shelf = models.CharField(max_length=10, null=False, choices=[
+    ])
+    language = models.CharField(max_length=20,
+                                choices=[("English", "English"), ("Spanish / Español", "Spanish / Español")])
+    shelf = models.CharField(max_length=10, null=False, default="0", choices=[
         ("1A", "1A"), ("1B", "1B"), ("1C", "1C"),
         ("2A", "2A"), ("2B", "2B"), ("2C", "2C"),
         ("3A", "3A"), ("3B", "3B"), ("3C", "3C"),
@@ -70,7 +85,8 @@ class Book(models.Model):
         ("14A", "14A"), ("14B", "14B"), ("14C", "14C"),
         ("15A", "15A"), ("15B", "15B"), ("15C", "15C"),
         ("16A", "16A"), ("16B", "16B"), ("16C", "16C"),
-        ])
+        ("0", "0")
+    ])
 
     def __str__(self):
         return self.title

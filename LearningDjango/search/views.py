@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.db.models import Q
 from search.models import Book
+from search.models import titlecase
 from .forms import NewBookForm
 
 
@@ -30,6 +31,26 @@ def search_results(request):
                 raw_input = request.POST['search_term']
                 search_terms = []
                 results = []
+                genre_options = [
+                    "realistic fiction",
+                    "literary fiction",
+                    "historical fiction",
+                    "mystery",
+                    "detective fiction",
+                    "romance",
+                    "historical fiction",
+                    "thriller",
+                    "horror",
+                    "science fiction",
+                    "fantasy",
+                    "children's books",
+                    "childrens books",
+                    "early readers"
+                ]
+                for genre in genre_options:
+                    if genre in raw_input.lower():
+                        raw_input = raw_input.lower().replace(genre, "")
+                        search_terms.append(genre)
                 for x in raw_input.split():
                     search_terms.append(x)
 
@@ -237,35 +258,61 @@ def search_results(request):
 def new_book_form(request):
     form = NewBookForm(request.POST or None)
     if form.is_valid():
-        form.save()
-        form = NewBookForm()
-
+        new_book = form.save(commit=False)
+        title_clean = titlecase(new_book.title)
+        author_first_clean = titlecase(new_book.author_first)
+        author_last_clean = titlecase(new_book.author_last)
+        new_book.title = title_clean
+        new_book.author_first = author_first_clean
+        new_book.author_last = author_last_clean
+        if new_book.genre_1 == "Realistic Fiction":
+            new_book.shelf = "1A"
+        elif new_book.genre_1 == "Literary Fiction":
+            new_book.shelf = "2A"
+        elif new_book.genre_1 == "Mystery / Detective Fiction":
+            new_book.shelf = "3A"
+        elif new_book.genre_1 == "Romance":
+            new_book.shelf = "4A"
+        elif new_book.genre_1 == "Historical Fiction":
+            new_book.shelf = "5A"
+        elif new_book.genre_1 == "Thriller / Horror":
+            new_book.shelf = "6A"
+        elif new_book.genre_1 == "Science Fiction":
+            new_book.shelf = "7A"
+        elif new_book.genre_1 == "Fantasy":
+            new_book.shelf = "8A"
+        elif new_book.genre_1 == "Children's Books / Early Readers":
+            new_book.shelf = "9A"
+        new_book.save()
+        context = {'title': new_book.title, 'shelf': new_book.shelf}
+        return render(request, 'search/new_book_confirmation.html', context)
+    form = NewBookForm()
     context = {'form': form}
     return render(request, 'search/new_book_form.html', context)
 
 
-# def new_book_confirmation(request):
-#     main_genre = request.POST['genre_1']
-#     title = request.POST['title']
-#     shelf = ""
-#     if main_genre == "Realistic Fiction":
-#         shelf = "1A"
-#     elif main_genre == "Literary Fiction":
-#         shelf = "2A"
-#     elif main_genre == "Mystery / Detective Fiction":
-#         shelf = "3A"
-#     elif main_genre == "Romance":
-#         shelf = "4A"
-#     elif main_genre == "Historical Fiction":
-#         shelf = "5A"
-#     elif main_genre == "Thriller / Horror":
-#         shelf = "6A"
-#     elif main_genre == "Science Fiction":
-#         shelf = "7A"
-#     elif main_genre == "Fantasy":
-#         shelf = "8A"
-#     elif main_genre == "Children's Books / Early Readers":
-#         shelf = "9A"
-#
-#     context = {'shelf': shelf, 'title': title}
-#     return render(request, 'search/new_book_confirmation.html', context)
+def new_book_confirmation(request):
+    main_genre = request.POST['genre_1']
+    title = request.POST['title']
+    shelf = ""
+    if main_genre == "Realistic Fiction":
+        shelf = "1A"
+    elif main_genre == "Literary Fiction":
+        shelf = "2A"
+    elif main_genre == "Mystery / Detective Fiction":
+        shelf = "3A"
+    elif main_genre == "Romance":
+        shelf = "4A"
+    elif main_genre == "Historical Fiction":
+        shelf = "5A"
+    elif main_genre == "Thriller / Horror":
+        shelf = "6A"
+    elif main_genre == "Science Fiction":
+        shelf = "7A"
+    elif main_genre == "Fantasy":
+        shelf = "8A"
+    elif main_genre == "Children's Books / Early Readers":
+        shelf = "9A"
+
+    context = {'shelf': shelf, 'title': title}
+    return render(request, 'search/new_book_confirmation.html', context)
