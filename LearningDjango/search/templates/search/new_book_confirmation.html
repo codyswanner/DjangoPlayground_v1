@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'search/new_book_confirmation.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h3>Book has been added to catalog!</h3>
+        <p>Please put "{{ title }}" on shelf {{ shelf }}</p>
+        <a href="{% url 'search:new_book_form' %}">Add another book</a>
+    </div>
+</body>
+</html>

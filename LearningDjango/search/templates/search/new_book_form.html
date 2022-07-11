@@ -45,10 +45,7 @@
                     <div class="label-container">{{ form.language.label }}</div>
                     {{ form.language }}
                 </div>
-                <div class="input-field">
-                    <div class="label-container">{{ form.shelf.label }}</div>
-                    {{ form.shelf }}
-                </div>
+                    {{ form.shelf.as_hidden }}
                 <input type="submit" value="Save" id="submit-button">
             </div>
         </div>
@@ -56,8 +53,8 @@
         <h3>Form Tips!</h3>
         <ul>
             <li>Use google! Search your book to find information and copy spelling, capitalization and punctuation from a reputable source like amazon.com, Google Books or a library.</li>
-            <li>Be sure titles and author names are capitalized appropriately.  Ask Cody if you have questions or need help.</li>
-            <li>Author middle name is optional, as well as Genre 2 and Genre 3.  All other fields are required.</li>
+            <li>Check capitalization!  The form automatically capitalizes titles and author names, just in case.  If a book or author name is not capitalized, ask Cody for help.</li>
+            <li>All fields are required except author middle name, Genre 2 and Genre 3.</li>
         </ul>
     </div>
     </form>
