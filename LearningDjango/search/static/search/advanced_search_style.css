@@ -75,3 +75,8 @@ body {
     vertical-align: top;
      
 }
+
+.side-bar li {
+    font-size: 20px;
+    margin-top: 6%;
+}

@@ -11,22 +11,24 @@ body {
     vertical-align: top;
     display: inline-block;
     margin: 5%;
-
+    backdrop-filter: blur(5px);
 }
 
 h3 {
     margin-top: 5%;
     margin-left: 5%;
     margin-bottom: 0;
+    font-size: 22px;
 }
 
 .form-container {
     display: flex;
     flex-direction: column;
     font-size: 20px;
-    width: 65%;
+    width: 100%;
     margin: 5%;
     margin-top: 2%;
+
 }
 
 .input-field {
@@ -35,7 +37,7 @@ h3 {
 }
 
 .input-field .label-container {
-    width: 20%;
+    width: 150px;
     text-align: right;
     display: inline-block;
 }
@@ -47,12 +49,12 @@ h3 {
     margin-bottom: 0;
 }
 
-#id_title, #id_author_first, #id_author_middle, #id_author_last, #id_genre_1, #id_genre_2, #id_genre_3, #id_shelf {
-    width: 70%;
+#id_title, #id_author_first, #id_author_middle, #id_author_last, #id_shelf {
+    width: 30vw;
 }
 
-#id_language {
-    width: 70.9%;
+#id_genre_1, #id_genre_2, #id_genre_3, #id_language {
+    width: 30.4vw;
 }
 
 
@@ -64,5 +66,10 @@ h3 {
     margin-top: 5%;
     padding: 2%;
     vertical-align: top;
+    backdrop-filter: blur(5px);
+}
 
+.side-bar li {
+    font-size: 22px;
+    margin-top: 10%;
 }
