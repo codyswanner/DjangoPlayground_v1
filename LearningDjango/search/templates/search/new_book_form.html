@@ -8,7 +8,7 @@
     <link rel="icon" href="{% static 'search/favicon_blue.ico' %}">
 </head>
 <body>
-    <form method="POST">
+    <form method="POST" name="new_book">
         {% csrf_token %}
         <div class="container">
             <h3>Add Book to Catalog</h3>
@@ -29,6 +29,64 @@
                     <div class="label-container">{{ form.author_last.label }}</div>
                     {{ form.author_last }}
                 </div>
+
+                <div id="add-author-container">
+                    <div id="button-container">
+                        <input type="button" name="add_author_btn" id="add-author-button" value="+">
+                    </div>
+                    <div id="button-label-container">
+                        <p class="button-explainer">(add additional authors)</p>
+                    </div>
+                </div>
+
+
+                <fieldset id="author2Fields" disabled>
+                    <div class="input-field" id="author2-first-field-container">
+                        <div class="label-and-remove-button">
+                            <div class="extra-author-label-container">
+                                <p class="extra-author-label">Second author: </p>
+                            </div>
+                            <div class="remove-button-container">
+                                <input type="button" class="remove-author-button" name="remove_author_btn" value="x">
+                            </div>
+                        </div>
+
+                        <div class="label-container">{{ form.author_first.label }}</div>
+                        {{ form.author2_first }}
+                    </div>
+                    <div class="input-field" id="author2-middle-field-container">
+                        <div class="label-container">{{ form.author_middle.label }}</div>
+                        {{ form.author2_middle }}
+                    </div>
+                    <div class="input-field" id="author2-last-field-container">
+                        <div class="label-container">{{ form.author_last.label }}</div>
+                        {{ form.author2_last }}
+                    </div>
+                </fieldset>
+
+                <fieldset id="author3Fields" disabled>
+                    <div class="input-field" id="author3-first-field-container">
+                        <div class="label-and-remove-button">
+                            <div class="extra-author-label-container">
+                                <p class="extra-author-label">Third author: </p>
+                            </div>
+                            <div class="remove-button-container">
+                                <input type="button" class="remove-author-button" name="remove_author_btn" value="x">
+                            </div>
+                        </div>
+                        <div class="label-container">{{ form.author_first.label }}</div>
+                        {{ form.author3_first }}
+                    </div>
+                    <div class="input-field" id="author3-middle-field-container">
+                        <div class="label-container">{{ form.author_middle.label }}</div>
+                        {{ form.author3_middle }}
+                    </div>
+                    <div class="input-field" id="author3-last-field-container">
+                        <div class="label-container">{{ form.author_last.label }}</div>
+                        {{ form.author3_last }}
+                    </div>
+                </fieldset>
+
                 <div class="input-field" id="genre-1-field-container">
                     <div class="label-container">{{ form.genre_1.label }}</div>
                     {{ form.genre_1 }}
@@ -45,19 +103,40 @@
                     <div class="label-container">{{ form.language.label }}</div>
                     {{ form.language }}
                 </div>
+                <div class="input-field" id="radio-container">
+                    <div class="label-container">{{ form.is_series.label }}</div>
+                    <div class="radio-selector">
+                        {{ form.is_series }}
+                    </div>
+                </div>
+                <fieldset class="input-field" id="seriesField" disabled>
+                    <div class="label-container">{{ form.series.label }}</div>
+                    {{ form.series }}
+                </fieldset>
                     {{ form.shelf.as_hidden }}
-                <input type="submit" value="Save" id="submit-button">
+                <div id="bottom-div">
+                    <div id="submit-button-container">
+                        <input type="submit" value="Save" id="submit-button">
+                    </div>
+                    <div id="clean-data-checkbox-container">
+                        <span class="tooltip-text">DO NOT CLICK, for developer use ONLY</span>
+                        <input type="checkbox" value="true" name="dont_clean_data" id="clean_data_checkbox">
+                    </div>
+                </div>
+
             </div>
         </div>
         <div class="side-bar">
         <h3>Form Tips!</h3>
         <ul>
-            <li>Use google! Search your book to find information and copy spelling, capitalization and punctuation from a reputable source like amazon.com, Google Books or a library.</li>
+            <li>Use google! Search your book to find information and copy spelling, capitalization and punctuation from a reputable source like Google Books, amazon.com, or a library.</li>
             <li>Check capitalization!  The form automatically capitalizes titles and author names, just in case.  If a book or author name is not capitalized, ask Cody for help.</li>
             <li>All fields are required except author middle name, Genre 2 and Genre 3.</li>
         </ul>
     </div>
     </form>
+
+<script src="{% static 'search/new_book_form_script.js' %}"></script>
 
 </body>
 </html>
