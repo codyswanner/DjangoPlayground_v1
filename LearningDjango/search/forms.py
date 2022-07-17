@@ -14,5 +14,16 @@ class NewBookForm(forms.ModelForm):
             'genre_2',
             'genre_3',
             'language',
-            'shelf'
+            'shelf',
+            'author2_first',
+            'author2_middle',
+            'author2_last',
+            'author3_first',
+            'author3_middle',
+            'author3_last',
+            'is_series',
+            'series'
         ]
+        widgets = {
+            'is_series': forms.RadioSelect
+        }

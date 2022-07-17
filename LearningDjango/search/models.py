@@ -13,7 +13,7 @@ def titlecase(s):
         s)
 
     # This step *sort of* lowercases the trivial words.  However, in an effort to avoid inadvertent capturing,
-    # the regexp specifies a whitespace on each side of the word.  This causes issues with situations like " and the "
+    # the regexp specifies a whitespace on each side of the word.  This causes issues with situations like " And The "
     # because there is only one whitespace in the middle, and therefore only one match, so it will return " and The ",
     # which is incorrect.  Also, worth noting that the all_titled string will have all capitalized words, hence the
     # capitalized words in the capturing group.
@@ -41,6 +41,7 @@ class Book(models.Model):
         ("Science Fiction", "Science Fiction"),
         ("Fantasy", "Fantasy"),
         ("Children's Books / Early Readers", "Children's Books / Early Readers"),
+        ("Biography / Autobiography", "Biography / Autobiography")
     ])
     genre_2 = models.CharField(max_length=35, null=True, blank=True, choices=[
         ("Realistic Fiction", "Realistic Fiction"),
@@ -53,6 +54,7 @@ class Book(models.Model):
         ("Fantasy", "Fantasy"),
         ("Children's Books / Early Readers", "Children's Books / Early Readers"),
         ("Young Adult Fiction", "Young Adult Fiction"),
+        ("Biography / Autobiography", "Biography / Autobiography")
     ])
     genre_3 = models.CharField(max_length=35, null=True, blank=True, choices=[
         ("Realistic Fiction", "Realistic Fiction"),
@@ -65,6 +67,7 @@ class Book(models.Model):
         ("Fantasy", "Fantasy"),
         ("Children's Books / Early Readers", "Children's Books / Early Readers"),
         ("Young Adult Fiction", "Young Adult Fiction"),
+        ("Biography / Autobiography", "Biography / Autobiography")
     ])
     language = models.CharField(max_length=20,
                                 choices=[("English", "English"), ("Spanish / Español", "Spanish / Español")])
@@ -87,6 +90,16 @@ class Book(models.Model):
         ("16A", "16A"), ("16B", "16B"), ("16C", "16C"),
         ("0", "0")
     ])
+    author2_first = models.CharField(max_length=30, blank=True)
+    author2_middle = models.CharField(max_length=30, blank=True)
+    author2_last = models.CharField(max_length=30, blank=True)
+    author3_first = models.CharField(max_length=30, blank=True)
+    author3_middle = models.CharField(max_length=30, blank=True)
+    author3_last = models.CharField(max_length=30, blank=True)
+
+    is_series_choices = [(True, "yes"), (False, "no")]
+    is_series = models.BooleanField(default=False, null=False, choices=is_series_choices)
+    series = models.CharField(max_length=30, null=True, blank=True)
 
     def __str__(self):
         return self.title

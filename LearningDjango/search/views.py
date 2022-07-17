@@ -52,7 +52,10 @@ def search_results(request):
                         raw_input = raw_input.lower().replace(genre, "")
                         search_terms.append(genre)
                 for x in raw_input.split():
-                    search_terms.append(x)
+                    if x == "the" or x == "at" or x == "of" or x == "and":
+                        pass
+                    else:
+                        search_terms.append(x)
 
                 for search_term in search_terms:
                     raw_results = Book.objects.filter(
@@ -259,12 +262,14 @@ def new_book_form(request):
     form = NewBookForm(request.POST or None)
     if form.is_valid():
         new_book = form.save(commit=False)
-        title_clean = titlecase(new_book.title)
-        author_first_clean = titlecase(new_book.author_first)
-        author_last_clean = titlecase(new_book.author_last)
-        new_book.title = title_clean
-        new_book.author_first = author_first_clean
-        new_book.author_last = author_last_clean
+        dont_clean_data = request.POST.get("dont_clean_data", "false")
+        if dont_clean_data == "false":
+            title_clean = titlecase(new_book.title)
+            author_first_clean = titlecase(new_book.author_first)
+            author_last_clean = titlecase(new_book.author_last)
+            new_book.title = title_clean
+            new_book.author_first = author_first_clean
+            new_book.author_last = author_last_clean
         if new_book.genre_1 == "Realistic Fiction":
             new_book.shelf = "1A"
         elif new_book.genre_1 == "Literary Fiction":
