@@ -25,7 +25,7 @@ h3 {
     display: flex;
     flex-direction: column;
     font-size: 20px;
-    width: 100%;
+    width: 90%;
     margin: 5%;
     margin-top: 2%;
 
@@ -42,6 +42,101 @@ h3 {
     display: inline-block;
 }
 
+#add-author-container {
+    width: 400px;
+    display: inline-block;
+    margin-bottom: 1vh;
+
+}
+
+#button-container {
+    width: 150px;
+    height: 22px;
+    margin-right: 0;
+    display: inline;
+    float: left;
+    vertical-align: middle;
+}
+
+#add-author-button {
+    float: right;
+    border: 2px;
+    border-radius: 10px;
+    display: inline;
+    vertical-align: middle;
+}
+
+#button-label-container {
+    display: inline;
+    width: 300px;
+    height: 17px;
+    margin: 0;
+
+}
+
+.button-explainer {
+    font-size: 10px;
+    width: 150px;
+    display: inline-block;
+    margin-left: 1%;
+    margin-top: 0;
+    margin-bottom: 0;
+    vertical-align: top;
+    padding-top: 5px;
+}
+
+
+
+
+fieldset:disabled {
+    display: none;
+}
+
+fieldset {
+    display: block;
+    margin: 0;
+    margin-bottom: 2vh;
+    padding: 0;
+    border: 0;
+}
+
+.label-and-remove-button {
+    display: block;
+}
+
+.extra-author-label-container {
+    display: inline-block;
+    margin: 0.5%;
+    margin-bottom: 2vh;
+    width: 135px;
+}
+
+.extra-author-label {
+    margin: 0;
+}
+
+.remove-button-container {
+    display:inline-block;
+    margin-left: 30vw;
+    margin-top: 5px;
+}
+
+.remove-author-button {
+    float: right;
+    border: 2px;
+    border-radius: 12px;
+    padding-bottom: 0.3vh;
+}
+
+
+.radio-selector {
+    display: inline-block;
+}
+
+#id_is_series div {
+    display: inline-block;
+}
+
 #submit-button {
     width: 20%;
     margin: 2%;
@@ -49,12 +144,40 @@ h3 {
     margin-bottom: 0;
 }
 
-#id_title, #id_author_first, #id_author_middle, #id_author_last, #id_shelf {
+#id_title, #id_author_first, #id_author_middle, #id_author_last, #id_shelf,
+#id_author2_first, #id_author2_middle, #id_author2_last,
+#id_author3_first, #id_author3_middle, #id_author3_last,
+#id_series {
     width: 30vw;
 }
 
 #id_genre_1, #id_genre_2, #id_genre_3, #id_language {
     width: 30.4vw;
+}
+
+#submit-button-container {
+    display: inline-block;
+    width: 30vw;
+}
+
+#submit-button {
+    margin-left: 5%;
+    width: 10vw;
+}
+
+#clean-data-checkbox-container {
+    display: inline-block;
+    width: 100px;
+    float: right;
+}
+
+#clean-data-checkbox-container .tooltip-text {
+    visibility: hidden;
+    font-size: 10px;
+}
+
+#clean-data-checkbox-container:hover .tooltip-text {
+    visibility: visible;
 }
 
 
