@@ -26,6 +26,10 @@ def titlecase(s):
     return trivials_lowered
 
 
+def match_score_sort(result):
+    return result.match_score
+
+
 class Book(models.Model):
     title = models.CharField(max_length=70, null=False)
     author_first = models.CharField(max_length=30, null=False)
@@ -41,7 +45,13 @@ class Book(models.Model):
         ("Science Fiction", "Science Fiction"),
         ("Fantasy", "Fantasy"),
         ("Children's Books / Early Readers", "Children's Books / Early Readers"),
-        ("Biography / Autobiography", "Biography / Autobiography")
+        ("Encyclopedia / General Information", "Encyclopedia / General Information"),
+        ("Dictionary / Thesaurus", "Dictionary / Thesaurus"),
+        ("Religious", "Religious"),
+        ("Science", "Science"),
+        ("History", "History"),
+        ("Biography / Memoir", "Biography / Memoir"),
+        ("Self Help", "Self Help")
     ])
     genre_2 = models.CharField(max_length=35, null=True, blank=True, choices=[
         ("Realistic Fiction", "Realistic Fiction"),
@@ -54,7 +64,13 @@ class Book(models.Model):
         ("Fantasy", "Fantasy"),
         ("Children's Books / Early Readers", "Children's Books / Early Readers"),
         ("Young Adult Fiction", "Young Adult Fiction"),
-        ("Biography / Autobiography", "Biography / Autobiography")
+        ("Encyclopedia / General Information", "Encyclopedia / General Information"),
+        ("Dictionary / Thesaurus", "Dictionary / Thesaurus"),
+        ("Religious", "Religious"),
+        ("Science", "Science"),
+        ("History", "History"),
+        ("Biography / Memoir", "Biography / Memoir"),
+        ("Self Help", "Self Help")
     ])
     genre_3 = models.CharField(max_length=35, null=True, blank=True, choices=[
         ("Realistic Fiction", "Realistic Fiction"),
@@ -67,7 +83,13 @@ class Book(models.Model):
         ("Fantasy", "Fantasy"),
         ("Children's Books / Early Readers", "Children's Books / Early Readers"),
         ("Young Adult Fiction", "Young Adult Fiction"),
-        ("Biography / Autobiography", "Biography / Autobiography")
+        ("Encyclopedia / General Information", "Encyclopedia / General Information"),
+        ("Dictionary / Thesaurus", "Dictionary / Thesaurus"),
+        ("Religious", "Religious"),
+        ("Science", "Science"),
+        ("History", "History"),
+        ("Biography / Memoir", "Biography / Memoir"),
+        ("Self Help", "Self Help")
     ])
     language = models.CharField(max_length=20,
                                 choices=[("English", "English"), ("Spanish / Español", "Spanish / Español")])
@@ -100,6 +122,8 @@ class Book(models.Model):
     is_series_choices = [(True, "yes"), (False, "no")]
     is_series = models.BooleanField(default=False, null=False, choices=is_series_choices)
     series = models.CharField(max_length=30, null=True, blank=True)
+
+    match_score = 0
 
     def __str__(self):
         return self.title

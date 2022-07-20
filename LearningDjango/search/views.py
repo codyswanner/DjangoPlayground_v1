@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Q
-from search.models import Book
-from search.models import titlecase
+from search.models import Book, titlecase, match_score_sort
 from .forms import NewBookForm
 
 
@@ -20,43 +19,41 @@ def search_results(request):
     if request.POST['search_type'] == "default_search":
         search_by = request.POST['search_by']
         search_term = request.POST['search_term']
-        # empty results set here isn't necessary, just makes PyCharm warning shut up
-        results = []
         # Using * overrides search_by and shows all data (also displays "searched * by *")
         if search_term == "*":
             results = Book.objects.all()
             search_by = "*"
         else:
+            raw_input = request.POST['search_term']
+            search_terms = []
+            raw_results = []
+            results = []
+            genre_options = [
+                "realistic fiction",
+                "literary fiction",
+                "historical fiction",
+                "mystery",
+                "detective fiction",
+                "romance",
+                "historical fiction",
+                "thriller",
+                "horror",
+                "science fiction",
+                "fantasy",
+                "children's books",
+                "childrens books",
+                "early readers"
+            ]
+            for genre in genre_options:
+                if genre in raw_input.lower():
+                    raw_input = raw_input.lower().replace(genre, "")
+                    search_terms.append(genre)
+            for x in raw_input.split():
+                if x.lower() == "the" or x.lower() == "at" or x.lower() == "of" or x.lower() == "and":
+                    pass
+                else:
+                    search_terms.append(x)
             if search_by == "all":
-                raw_input = request.POST['search_term']
-                search_terms = []
-                results = []
-                genre_options = [
-                    "realistic fiction",
-                    "literary fiction",
-                    "historical fiction",
-                    "mystery",
-                    "detective fiction",
-                    "romance",
-                    "historical fiction",
-                    "thriller",
-                    "horror",
-                    "science fiction",
-                    "fantasy",
-                    "children's books",
-                    "childrens books",
-                    "early readers"
-                ]
-                for genre in genre_options:
-                    if genre in raw_input.lower():
-                        raw_input = raw_input.lower().replace(genre, "")
-                        search_terms.append(genre)
-                for x in raw_input.split():
-                    if x == "the" or x == "at" or x == "of" or x == "and":
-                        pass
-                    else:
-                        search_terms.append(x)
-
                 for search_term in search_terms:
                     raw_results = Book.objects.filter(
                         Q(author_first__icontains=search_term) |
@@ -67,24 +64,43 @@ def search_results(request):
                         Q(genre_2__icontains=search_term) |
                         Q(genre_3__icontains=search_term) |
                         Q(shelf__icontains=search_term) |
-                        Q(language__icontains=search_term))
-                    for result in raw_results:
-                        if result not in results:
-                            results.append(result)
+                        Q(language__icontains=search_term) |
+                        Q(series__icontains=search_term))
             elif search_by == "title":
-                results = Book.objects.filter(title__icontains=search_term)
+                for search_term in search_terms:
+                    raw_results = Book.objects.filter(title__icontains=search_term)
             elif search_by == "author":
-                results = Book.objects.filter(
-                    Q(author_first__icontains=search_term) | Q(author_last__icontains=search_term))
+                for search_term in search_terms:
+                    raw_results = Book.objects.filter(
+                        Q(author_first__icontains=search_term) | Q(author_middle__icontains=search_term) | Q(author_last__icontains=search_term) |
+                        Q(author2_first__icontains=search_term) | Q(author2_middle__icontains=search_term) | Q(author2_last__icontains=search_term) |
+                        Q(author3_first__icontains=search_term) | Q(author3_middle__icontains=search_term) | Q(author3_last__icontains=search_term))
             elif search_by == "genre":
-                results = Book.objects.filter(
-                    Q(genre_1__icontains=search_term) | Q(genre_2__icontains=search_term) | Q(
-                        genre_3__icontains=search_term))
+                for search_term in search_terms:
+                    raw_results = Book.objects.filter(
+                        Q(genre_1__icontains=search_term) | Q(genre_2__icontains=search_term) |
+                        Q(genre_3__icontains=search_term))
             elif search_by == "shelf":
-                results = Book.objects.filter(shelf__icontains=search_term)
+                for search_term in search_terms:
+                    raw_results = Book.objects.filter(shelf__icontains=search_term)
             elif search_by == "language":
-                results = Book.objects.filter(language__contains=search_term)
+                for search_term in search_terms:
+                    raw_results = Book.objects.filter(language__icontains=search_term)
+            elif search_by == "series":
+                for search_term in search_terms:
+                    raw_results = Book.objects.filter(series__icontains=search_term)
             # Add else statement that brings up error page
+            for result in raw_results:
+                if result not in results:
+                    results.append(result)
+                else:
+                    # if you've reached this block of code, congrats, you're already in the list and now
+                    # your match score will be increased!  "emi" stands for "existing match index" and is used
+                    # to increase the match score for the correct match.
+                    emi = results.index(result)
+                    results[emi].match_score += 1
+                    print(results[emi].match_score)
+            results.sort(reverse=True, key=match_score_sort)
         context = {'search_term': search_term,
                    'results': results,
                    'search_by': search_by,
@@ -318,6 +334,20 @@ def new_book_confirmation(request):
         shelf = "8A"
     elif main_genre == "Children's Books / Early Readers":
         shelf = "9A"
+    elif main_genre == "Encyclopedia / General Information":
+        shelf = "10A"
+    elif main_genre == "Dictionary / Thesaurus":
+        shelf = "11A"
+    elif main_genre == "Religious":
+        shelf = "12A"
+    elif main_genre == "Science":
+        shelf = "13A"
+    elif main_genre == "History":
+        shelf = "14A"
+    elif main_genre == "Biography / Memoir":
+        shelf = "15A"
+    elif main_genre == "Self Help":
+        shelf = "16A"
 
     context = {'shelf': shelf, 'title': title}
     return render(request, 'search/new_book_confirmation.html', context)
