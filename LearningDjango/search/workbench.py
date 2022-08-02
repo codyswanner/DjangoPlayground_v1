@@ -1,90 +1,86 @@
-from django.shortcuts import render
-from django.db.models import Q
-from search.models import Book,  match_score_sort
+import re
+from time import sleep
+
+"""
+The purpose of this program is to take an input .csv file (here named input.csv) that was downloaded from Google Sheets and
+reformat it into the output file (here named output.txt).  The program replaces Google Sheets' default field separator (comma)
+with a new custom separator (semicolon), working under the assumption that new fields will begin with a character that is not
+a space, double quote, or newline.
+
+Note that the file format must be changed to .txt for python to accept it.
+You may change the files back to .csv after the program has finished.
+
+This works as expected for the library catalog I am currently building, and facilitates transfer of data from
+Google Sheets to MySQL.
+
+An example of an input and output line for this program
+
+this,line,is,separated,by,commas,but,should,be,semicolons
+this;line;is;separated;by;commas;but;should;be;semicolons
 
 
-def search_results(request):
-    if request.POST['search_type'] == "default_search":
-        search_by = request.POST['search_by']
-        search_term = request.POST['search_term']
-        # Using * overrides search_by and shows all data (also displays "searched * by *")
-        if search_term == "*":
-            results = Book.objects.all()
-            search_by = "*"
-        else:
-            raw_input = request.POST['search_term']
-            search_terms = []
-            raw_results = []
-            results = []
-            genre_options = [
-                "realistic fiction",
-                "literary fiction",
-                "historical fiction",
-                "mystery",
-                "detective fiction",
-                "romance",
-                "historical fiction",
-                "thriller",
-                "horror",
-                "science fiction",
-                "fantasy",
-                "children's books",
-                "childrens books",
-                "early readers"
-            ]
-            for genre in genre_options:
-                if genre in raw_input.lower():
-                    raw_input = raw_input.lower().replace(genre, "")
-                    search_terms.append(genre)
-            for x in raw_input.split():
-                if x.lower() == "the" or x.lower() == "at" or x.lower() == "of" or x.lower() == "and":
-                    pass
-                else:
-                    search_terms.append(x)
-            if search_by == "all":
-                for search_term in search_terms:
-                    raw_results = Book.objects.filter(
-                        Q(author_first__icontains=search_term) |
-                        Q(author_last__icontains=search_term) |
-                        Q(author_middle__icontains=search_term) |
-                        Q(title__icontains=search_term) |
-                        Q(genre_1__icontains=search_term) |
-                        Q(genre_2__icontains=search_term) |
-                        Q(genre_3__icontains=search_term) |
-                        Q(shelf__icontains=search_term) |
-                        Q(language__icontains=search_term) |
-                        Q(series__icontains=search_term))
-            elif search_by == "title":
-                raw_results = Book.objects.filter(title__icontains=search_term)
-            elif search_by == "author":
-                raw_results = Book.objects.filter(
-                    Q(author_first__icontains=search_term) | Q(author_middle__icontains=search_term) | Q(author_last__icontains=search_term) |
-                    Q(author2_first__icontains=search_term) | Q(author2_middle__icontains=search_term) | Q(author2_last__icontains=search_term) |
-                    Q(author3_first__icontains=search_term) | Q(author3_middle__icontains=search_term) | Q(author3_last__icontains=search_term))
-            elif search_by == "genre":
-                raw_results = Book.objects.filter(
-                    Q(genre_1__icontains=search_term) | Q(genre_2__icontains=search_term) | Q(
-                        genre_3__icontains=search_term))
-            elif search_by == "shelf":
-                raw_results = Book.objects.filter(shelf__icontains=search_term)
-            elif search_by == "language":
-                raw_results = Book.objects.filter(language__icontains=search_term)
-            elif search_by == "series":
-                raw_results = Book.objects.filter(series__icontains=search_term)
-            # Add else statement that brings up error page
-            for result in raw_results:
-                if result not in results:
-                    results.append(result)
-                else:
-                    # if you've reached this block of code, congrats, you're already in the list and now
-                    # your match score will be increased!  "emi" stands for "existing match index" and is used
-                    # to increase the match score for the correct match.
-                    emi = results.index(result)
-                    results[emi].match_score += 1
-                    print(results[emi].match_score)
-            results.sort(reverse=True, key=match_score_sort)
-        context = {'search_term': search_term,
-                   'results': results,
-                   'search_by': search_by,
-                   }
-        return render(request, 'search/results_update.html', context)
+Following blank spaces escape this rule, such as in
+
+this,line, has,an,exception
+this;line, has;an;exception
+
+and double quotes are removed with prejudice, such as
+
+this,"line includes",double,quotes
+this;line includes;double;quotes
+
+
+
+The specific book title presenting bugs when exporting from Google Sheets (and thus inspriring this program) is
+31,"Will Grayson, Will Grayson",David,,Levithan,Realistic Fiction,Young Adult Fiction,,English,1A,John,,Green,,,,0,
+
+Which becomes
+31;Will Grayson, Will Grayson;David;;Levithan;Realistic Fiction;Young Adult Fiction;;English;1A;John;;Green;;;;0;
+
+which is much easier for me to import into MySQL.
+"""
+
+new_data = open('output.csv', 'w')
+
+with open('input.csv', 'r+') as load_data:
+    load_data.seek(0)
+
+    for line in load_data.readlines():
+        contents = line
+
+        # This while block converts commas acting as field separators into semicolons.
+        while re.search(r',[^\s]', contents):
+            for i in range(0, len(contents)):
+                if i + 1 < len(contents):
+                    if contents[i] == "," and contents[i + 1] != " ":
+                        substring1 = contents[:i]
+                        substring2 = contents[i + 1:]
+                        contents = substring1 + ";" + substring2
+        # This version of the program uses print statements to track progress and aid in debugging.
+        # sleep function is used to enable human reading of print statements in real time (they go real fast otherwise).
+        # tbh... the debugging part is done, I just enjoy watching the print statements, and that's why they're still here.
+        print("completed first loop")
+        sleep(.1)
+
+        # This while block strips double quotes with prejudice.
+        while re.search(r';".+";', contents):
+            print("entering loop")
+            sleep(.2)
+            for i in range(0, len(contents)):
+                if i < len(contents):
+                    if contents[i] == "\"":
+                        print("double quote found at index" + str(i))
+                        substring1 = contents[:i]
+                        print(substring1)
+                        substring2 = contents[i + 1:]
+                        print(substring2)
+                        contents = substring1 + substring2
+                        print(contents)
+                    else:
+                        print("not a double quote at index " + str(i))
+                        sleep(.1)
+        print("completed second loop")
+        sleep(.1)
+
+        # Write the data to the new file (output.csv)
+        new_data.write(contents)

@@ -26,6 +26,21 @@ def titlecase(s):
     return trivials_lowered
 
 
+def compile_results(raw_results, results_list):
+    for result in raw_results:
+        if result not in results_list:
+            results_list.append(result)
+            result.match_score = 0
+            print("New result: " + result.title)
+        else:
+            # if you've reached this block of code, congrats, you're already in the list and now
+            # your match score will be increased!  "emi" stands for "existing match index" and is used
+            # to increase the match score for the correct match.
+            emi = results_list.index(result)
+            results_list[emi].match_score += 1
+            print("Score updated for " + result.title + " to " + str(results_list[emi].match_score))
+
+
 def match_score_sort(result):
     return result.match_score
 
@@ -89,7 +104,8 @@ class Book(models.Model):
         ("Science", "Science"),
         ("History", "History"),
         ("Biography / Memoir", "Biography / Memoir"),
-        ("Self Help", "Self Help")
+        ("Self Help", "Self Help"),
+
     ])
     language = models.CharField(max_length=20,
                                 choices=[("English", "English"), ("Spanish / Español", "Spanish / Español")])
@@ -110,14 +126,16 @@ class Book(models.Model):
         ("14A", "14A"), ("14B", "14B"), ("14C", "14C"),
         ("15A", "15A"), ("15B", "15B"), ("15C", "15C"),
         ("16A", "16A"), ("16B", "16B"), ("16C", "16C"),
+        ("17A", "17A"), ("17B", "17B"), ("17C", "17C"),
+        ("18A", "18A"), ("18B", "18B"), ("18C", "18C"),
         ("0", "0")
     ])
-    author2_first = models.CharField(max_length=30, blank=True)
-    author2_middle = models.CharField(max_length=30, blank=True)
-    author2_last = models.CharField(max_length=30, blank=True)
-    author3_first = models.CharField(max_length=30, blank=True)
-    author3_middle = models.CharField(max_length=30, blank=True)
-    author3_last = models.CharField(max_length=30, blank=True)
+    author2_first = models.CharField(max_length=30, null=True, blank=True)
+    author2_middle = models.CharField(max_length=30, null=True, blank=True)
+    author2_last = models.CharField(max_length=30, null=True, blank=True)
+    author3_first = models.CharField(max_length=30, null=True, blank=True)
+    author3_middle = models.CharField(max_length=30, null=True, blank=True)
+    author3_last = models.CharField(max_length=30, null=True, blank=True)
 
     is_series_choices = [(True, "yes"), (False, "no")]
     is_series = models.BooleanField(default=False, null=False, choices=is_series_choices)

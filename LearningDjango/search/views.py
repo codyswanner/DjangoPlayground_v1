@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Q
-from search.models import Book, titlecase, match_score_sort
+from search.models import Book, titlecase, compile_results, match_score_sort
 from .forms import NewBookForm
 
 
@@ -18,9 +18,9 @@ def advanced_search(request):
 def search_results(request):
     if request.POST['search_type'] == "default_search":
         search_by = request.POST['search_by']
-        search_term = request.POST['search_term']
+        search_input = request.POST['search_term']
         # Using * overrides search_by and shows all data (also displays "searched * by *")
-        if search_term == "*":
+        if search_input == "*":
             results = Book.objects.all()
             search_by = "*"
         else:
@@ -42,7 +42,8 @@ def search_results(request):
                 "fantasy",
                 "children's books",
                 "childrens books",
-                "early readers"
+                "early readers",
+                "young adult fiction",
             ]
             for genre in genre_options:
                 if genre in raw_input.lower():
@@ -54,54 +55,56 @@ def search_results(request):
                 else:
                     search_terms.append(x)
             if search_by == "all":
-                for search_term in search_terms:
+                for search_item in search_terms:
                     raw_results = Book.objects.filter(
-                        Q(author_first__icontains=search_term) |
-                        Q(author_last__icontains=search_term) |
-                        Q(author_middle__icontains=search_term) |
-                        Q(title__icontains=search_term) |
-                        Q(genre_1__icontains=search_term) |
-                        Q(genre_2__icontains=search_term) |
-                        Q(genre_3__icontains=search_term) |
-                        Q(shelf__icontains=search_term) |
-                        Q(language__icontains=search_term) |
-                        Q(series__icontains=search_term))
+                        Q(author_first__icontains=search_item) |
+                        Q(author_last__icontains=search_item) |
+                        Q(author_middle__icontains=search_item) |
+                        Q(title__icontains=search_item) |
+                        Q(genre_1__icontains=search_item) |
+                        Q(genre_2__icontains=search_item) |
+                        Q(genre_3__icontains=search_item) |
+                        Q(shelf__icontains=search_item) |
+                        Q(language__icontains=search_item) |
+                        Q(series__icontains=search_item))
+                    compile_results(raw_results, results)
             elif search_by == "title":
-                for search_term in search_terms:
-                    raw_results = Book.objects.filter(title__icontains=search_term)
+                for search_item in search_terms:
+                    raw_results = Book.objects.filter(title__icontains=search_item)
+                    compile_results(raw_results, results)
             elif search_by == "author":
-                for search_term in search_terms:
+                for search_item in search_terms:
                     raw_results = Book.objects.filter(
-                        Q(author_first__icontains=search_term) | Q(author_middle__icontains=search_term) | Q(author_last__icontains=search_term) |
-                        Q(author2_first__icontains=search_term) | Q(author2_middle__icontains=search_term) | Q(author2_last__icontains=search_term) |
-                        Q(author3_first__icontains=search_term) | Q(author3_middle__icontains=search_term) | Q(author3_last__icontains=search_term))
+                        Q(author_first__icontains=search_item) | Q(author_middle__icontains=search_item) | Q(author_last__icontains=search_item) |
+                        Q(author2_first__icontains=search_item) | Q(author2_middle__icontains=search_item) | Q(author2_last__icontains=search_item) |
+                        Q(author3_first__icontains=search_item) | Q(author3_middle__icontains=search_item) | Q(author3_last__icontains=search_item))
+                    compile_results(raw_results, results)
             elif search_by == "genre":
-                for search_term in search_terms:
+                for search_item in search_terms:
                     raw_results = Book.objects.filter(
-                        Q(genre_1__icontains=search_term) | Q(genre_2__icontains=search_term) |
-                        Q(genre_3__icontains=search_term))
+                        Q(genre_1__icontains=search_item) | Q(genre_2__icontains=search_item) |
+                        Q(genre_3__icontains=search_item))
+                    compile_results(raw_results, results)
             elif search_by == "shelf":
-                for search_term in search_terms:
-                    raw_results = Book.objects.filter(shelf__icontains=search_term)
+                for search_item in search_terms:
+                    raw_results = Book.objects.filter(shelf__icontains=search_item)
+                    compile_results(raw_results, results)
             elif search_by == "language":
-                for search_term in search_terms:
-                    raw_results = Book.objects.filter(language__icontains=search_term)
+                for search_item in search_terms:
+                    raw_results = Book.objects.filter(language__icontains=search_item)
+                    compile_results(raw_results, results)
             elif search_by == "series":
-                for search_term in search_terms:
-                    raw_results = Book.objects.filter(series__icontains=search_term)
-            # Add else statement that brings up error page
-            for result in raw_results:
-                if result not in results:
-                    results.append(result)
-                else:
-                    # if you've reached this block of code, congrats, you're already in the list and now
-                    # your match score will be increased!  "emi" stands for "existing match index" and is used
-                    # to increase the match score for the correct match.
-                    emi = results.index(result)
-                    results[emi].match_score += 1
-                    print(results[emi].match_score)
+                for search_item in search_terms:
+                    raw_results = Book.objects.filter(series__icontains=search_item)
+                    compile_results(raw_results, results)
+
+            # remove results with low relevance scores
             results.sort(reverse=True, key=match_score_sort)
-        context = {'search_term': search_term,
+            for result in results:
+                print("Final score for " + result.title + " is " + str(result.match_score))
+            while results[-1].match_score <= len(search_terms)-2:
+                results.remove(results[-1])
+        context = {'search_term': search_input,
                    'results': results,
                    'search_by': search_by,
                    }
@@ -304,6 +307,20 @@ def new_book_form(request):
             new_book.shelf = "8A"
         elif new_book.genre_1 == "Children's Books / Early Readers":
             new_book.shelf = "9A"
+        elif new_book.genre_1 == "Encyclopedia / General Information":
+            new_book.shelf = "10A"
+        elif new_book.genre_1 == "Dictionary / Thesaurus":
+            new_book.shelf = "11A"
+        elif new_book.genre_1 == "Religious":
+            new_book.shelf = "12A"
+        elif new_book.genre_1 == "Science":
+            new_book.shelf = "13A"
+        elif new_book.genre_1 == "History":
+            new_book.shelf = "14A"
+        elif new_book.genre_1 == "Biography / Memoir":
+            new_book.shelf = "15A"
+        elif new_book.genre_1 == "Self Help":
+            new_book.shelf = "16A"
         new_book.save()
         context = {'title': new_book.title, 'shelf': new_book.shelf}
         return render(request, 'search/new_book_confirmation.html', context)
