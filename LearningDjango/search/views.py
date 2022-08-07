@@ -283,12 +283,25 @@ def new_book_form(request):
         new_book = form.save(commit=False)
         dont_clean_data = request.POST.get("dont_clean_data", "false")
         if dont_clean_data == "false":
-            title_clean = titlecase(new_book.title)
-            author_first_clean = titlecase(new_book.author_first)
-            author_last_clean = titlecase(new_book.author_last)
-            new_book.title = title_clean
-            new_book.author_first = author_first_clean
-            new_book.author_last = author_last_clean
+            new_book.title = titlecase(new_book.title)
+            new_book.author_first = titlecase(new_book.author_first)
+            new_book.author_last = titlecase(new_book.author_last)
+            if new_book.author_middle:
+                new_book.author_middle = titlecase(new_book.author_middle)
+            if new_book.author2_first:
+                new_book.author2_first = titlecase(new_book.author2_first)
+            if new_book.author2_middle:
+                new_book.author2_middle = titlecase(new_book.author2_middle)
+            if new_book.author2_last:
+                new_book.author2_last = titlecase(new_book.author2_last)
+            if new_book.author3_first:
+                new_book.author3_first = titlecase(new_book.author3_first)
+            if new_book.author3_middle:
+                new_book.author3_middle = titlecase(new_book.author3_middle)
+            if new_book.author3_last:
+                new_book.author3_last = titlecase(new_book.author3_last)
+            if new_book.series:
+                new_book.series = titlecase(new_book.series)
         if new_book.genre_1 == "Realistic Fiction":
             new_book.shelf = "1A"
         elif new_book.genre_1 == "Literary Fiction":

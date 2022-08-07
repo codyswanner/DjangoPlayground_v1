@@ -4,28 +4,23 @@ import re
 
 # Create your models here.
 
-# The titlecase function *sort of* corrects capitalization mistakes by users.  See notes inside function.
+# This function sorts which words in titles should be capitalized and returns them appropriately.
+# To be used with titlecase function defined below
+def cap(x):
+    if x.group('exceptions'):
+        return x.group('exceptions')
+    else:
+        return x.group().capitalize()
+
+
+# This function takes in and returns input strings (such as titles, authors, etc.) to capitalize them appropriately.
 def titlecase(s):
-    # This step titlecases the first letter of all words, including trivial words like "and", "the", "of", etc.
-    all_titled = re.sub(
-        r"[A-Za-z]+('[A-Za-z]+)?",
-        lambda word: word.group(0).capitalize(),
-        s)
-
-    # This step *sort of* lowercases the trivial words.  However, in an effort to avoid inadvertent capturing,
-    # the regexp specifies a whitespace on each side of the word.  This causes issues with situations like " And The "
-    # because there is only one whitespace in the middle, and therefore only one match, so it will return " and The ",
-    # which is incorrect.  Also, worth noting that the all_titled string will have all capitalized words, hence the
-    # capitalized words in the capturing group.
-    # TODO: make a better regexp for this
-    trivials_lowered = re.sub(
-        r"\s(The|And|Of|For|In|A|To|An|By|On|That|But|Yet|So|Nor|Or|As|At)\s",
-        lambda word: word.group(0).lower(),
-        all_titled)
-
-    return trivials_lowered
+    reg_exp = r"(?P<exceptions> and| the| of| for| in| at| to| an| by| on| that| but| yet| so| nor| or| as| a )|[a-zA-ZÀ-ÿ]+('[A-Za-zÀ-ÿ]+)?"
+    return re.sub(reg_exp, cap, s)
 
 
+# This function works in views.py, function search_results.
+# It scores results for relevance sorting based on how many times a result matches with search terms.
 def compile_results(raw_results, results_list):
     for result in raw_results:
         if result not in results_list:
@@ -50,7 +45,7 @@ class Book(models.Model):
     author_first = models.CharField(max_length=30, null=False)
     author_middle = models.CharField(max_length=30, null=True, blank=True)
     author_last = models.CharField(max_length=30, null=False)
-    genre_1 = models.CharField(max_length=35, null=False, choices=[
+    genre_choices_abridged = [
         ("Realistic Fiction", "Realistic Fiction"),
         ("Literary Fiction", "Literary Fiction"),
         ("Mystery / Detective Fiction", "Mystery / Detective Fiction"),
@@ -67,8 +62,8 @@ class Book(models.Model):
         ("History", "History"),
         ("Biography / Memoir", "Biography / Memoir"),
         ("Self Help", "Self Help")
-    ])
-    genre_2 = models.CharField(max_length=35, null=True, blank=True, choices=[
+    ]
+    genre_choices_full = [
         ("Realistic Fiction", "Realistic Fiction"),
         ("Literary Fiction", "Literary Fiction"),
         ("Mystery / Detective Fiction", "Mystery / Detective Fiction"),
@@ -86,27 +81,10 @@ class Book(models.Model):
         ("History", "History"),
         ("Biography / Memoir", "Biography / Memoir"),
         ("Self Help", "Self Help")
-    ])
-    genre_3 = models.CharField(max_length=35, null=True, blank=True, choices=[
-        ("Realistic Fiction", "Realistic Fiction"),
-        ("Literary Fiction", "Literary Fiction"),
-        ("Mystery / Detective Fiction", "Mystery / Detective Fiction"),
-        ("Romance", "Romance"),
-        ("Historical Fiction", "Historical Fiction"),
-        ("Thriller / Horror", "Thriller / Horror"),
-        ("Science Fiction", "Science Fiction"),
-        ("Fantasy", "Fantasy"),
-        ("Children's Books / Early Readers", "Children's Books / Early Readers"),
-        ("Young Adult Fiction", "Young Adult Fiction"),
-        ("Encyclopedia / General Information", "Encyclopedia / General Information"),
-        ("Dictionary / Thesaurus", "Dictionary / Thesaurus"),
-        ("Religious", "Religious"),
-        ("Science", "Science"),
-        ("History", "History"),
-        ("Biography / Memoir", "Biography / Memoir"),
-        ("Self Help", "Self Help"),
-
-    ])
+    ]
+    genre_1 = models.CharField(max_length=35, null=False, choices=genre_choices_abridged)
+    genre_2 = models.CharField(max_length=35, null=True, blank=True, choices=genre_choices_full)
+    genre_3 = models.CharField(max_length=35, null=True, blank=True, choices=genre_choices_full)
     language = models.CharField(max_length=20,
                                 choices=[("English", "English"), ("Spanish / Español", "Spanish / Español")])
     shelf = models.CharField(max_length=10, null=False, default="0", choices=[
