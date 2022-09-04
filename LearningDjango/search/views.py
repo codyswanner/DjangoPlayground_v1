@@ -30,7 +30,7 @@ def search_results(request):
             results = []
             genre_options = [
                 "realistic fiction",
-                "literary fiction",
+                "Illustrated Novels",
                 "historical fiction",
                 "mystery",
                 "detective fiction",
@@ -102,8 +102,12 @@ def search_results(request):
             results.sort(reverse=True, key=match_score_sort)
             for result in results:
                 print("Final score for " + result.title + " is " + str(result.match_score))
-            while results[-1].match_score <= len(search_terms)-2:
-                results.remove(results[-1])
+            if len(results) > 1:
+                while results[-1].match_score <= len(search_terms)-2:
+                    results.remove(results[-1])
+            elif len(results) == 0:
+                # TODO:  Create "no results" page
+                print("No results found for search: " + raw_input)
         context = {'search_term': search_input,
                    'results': results,
                    'search_by': search_by,
@@ -302,9 +306,10 @@ def new_book_form(request):
                 new_book.author3_last = titlecase(new_book.author3_last)
             if new_book.series:
                 new_book.series = titlecase(new_book.series)
+        # TODO: Add a condition to move non-English books to their own shelf (ie, Spanish will get it's own shelf)
         if new_book.genre_1 == "Realistic Fiction":
             new_book.shelf = "1A"
-        elif new_book.genre_1 == "Literary Fiction":
+        elif new_book.genre_1 == "Illustrated Novels":
             new_book.shelf = "2A"
         elif new_book.genre_1 == "Mystery / Detective Fiction":
             new_book.shelf = "3A"
@@ -334,6 +339,8 @@ def new_book_form(request):
             new_book.shelf = "15A"
         elif new_book.genre_1 == "Self Help":
             new_book.shelf = "16A"
+        elif new_book.genre_1 == "Recipe / Cookbook":
+            new_book.shelf = "17A"
         new_book.save()
         context = {'title': new_book.title, 'shelf': new_book.shelf}
         return render(request, 'search/new_book_confirmation.html', context)
@@ -348,7 +355,7 @@ def new_book_confirmation(request):
     shelf = ""
     if main_genre == "Realistic Fiction":
         shelf = "1A"
-    elif main_genre == "Literary Fiction":
+    elif main_genre == "Illustrated Novels":
         shelf = "2A"
     elif main_genre == "Mystery / Detective Fiction":
         shelf = "3A"

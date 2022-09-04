@@ -47,7 +47,7 @@ class Book(models.Model):
     author_last = models.CharField(max_length=30, null=False)
     genre_choices_abridged = [
         ("Realistic Fiction", "Realistic Fiction"),
-        ("Literary Fiction", "Literary Fiction"),
+        ("Illustrated Novels", "Illustrated Novels"),
         ("Mystery / Detective Fiction", "Mystery / Detective Fiction"),
         ("Romance", "Romance"),
         ("Historical Fiction", "Historical Fiction"),
@@ -61,11 +61,12 @@ class Book(models.Model):
         ("Science", "Science"),
         ("History", "History"),
         ("Biography / Memoir", "Biography / Memoir"),
-        ("Self Help", "Self Help")
+        ("Self Help", "Self Help"),
+        ("Recipe / Cookbook", "Recipe / Cookbook")
     ]
     genre_choices_full = [
         ("Realistic Fiction", "Realistic Fiction"),
-        ("Literary Fiction", "Literary Fiction"),
+        ("Illustrated Novels", "Illustrated Novels"),
         ("Mystery / Detective Fiction", "Mystery / Detective Fiction"),
         ("Romance", "Romance"),
         ("Historical Fiction", "Historical Fiction"),
@@ -80,7 +81,8 @@ class Book(models.Model):
         ("Science", "Science"),
         ("History", "History"),
         ("Biography / Memoir", "Biography / Memoir"),
-        ("Self Help", "Self Help")
+        ("Self Help", "Self Help"),
+        ("Recipe / Cookbook", "Recipe / Cookbook")
     ]
     genre_1 = models.CharField(max_length=35, null=False, choices=genre_choices_abridged)
     genre_2 = models.CharField(max_length=35, null=True, blank=True, choices=genre_choices_full)
