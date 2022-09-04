@@ -18,7 +18,8 @@ document.forms.new_book.addEventListener ('click', e => {
 document.forms.new_book.addEventListener ('change', e => {
     if (e.target.value == 'True') {
         e.target.form.seriesField.disabled = false;
-    } else {
+    } else if (e.target.value == 'False') {
         e.target.form.seriesField.disabled = true;
     }
 })
+
