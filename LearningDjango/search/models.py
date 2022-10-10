@@ -1,8 +1,6 @@
 from django.db import models
 import re
 
-#TODO: remove the custom functions and refactor the files that are using them.
-# Check for import statements from models.py, especially mentioning these functions.
 
 # Create your models here.
 
