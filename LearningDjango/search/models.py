@@ -41,7 +41,7 @@ def match_score_sort(result):
 
 
 class Book(models.Model):
-    title = models.CharField(max_length=70, null=False)
+    title = models.CharField(max_length=120, null=False)
     author_first = models.CharField(max_length=30, null=False)
     author_middle = models.CharField(max_length=30, null=True, blank=True)
     author_last = models.CharField(max_length=30, null=False)
