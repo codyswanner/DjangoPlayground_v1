@@ -105,6 +105,8 @@ def search_results(request):
             if len(results) > 1:
                 while results[-1].match_score <= len(search_terms)-2:
                     results.remove(results[-1])
+                    if len(results) == 0:
+                        break
             elif len(results) == 0:
                 # TODO:  Create "no results" page
                 print("No results found for search: " + raw_input)
